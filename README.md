@@ -7,6 +7,7 @@ Table of contents
 
 - [Overview](#overview)
 - [Simulation](#simulation)
+- [Checklist for Open-MPW Submission](#checklist-for-open-mpw-submission)
 
 Overview
 ========
@@ -17,3 +18,18 @@ Simulation
 ========
 
 TBA
+
+Checklist for Open-MPW Submission
+=================================
+
+-  [] The project repo adheres to the same directory structure in this
+   repo.
+-  [] The project repo contain info.yaml at the project root.
+-  [] Top level macro is named ``user_project_wrapper``.
+-  [] Full Chip Simulation passes for RTL and GL (gate-level)
+-  [] The hardened Macros are LVS and DRC clean
+-  [] The hardened ``user_project_wrapper`` adheres to the same pin
+   order specified at
+   `pin\_order <https://github.com/efabless/caravel/blob/master/openlane/user_project_wrapper_empty/pin_order.cfg>`__
+-  [] XOR check passes with zero total difference.
+-  [] Openlane summary reports are retained under ./signoff/
