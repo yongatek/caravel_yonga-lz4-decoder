@@ -13,58 +13,48 @@
 // limitations under the License.
 // SPDX-License-Identifier: Apache-2.0
 
+`include "yonga_lz4_decoder_top.v"
+`include "yonga_lz4_decoder.v"
+`include "yonga_lz4_decoder_controller.v"
+`include "dual_ram.v"
+`include "FIFO_v.v"
+`include "list_ch08_04_uart.v"
+`include "list_ch08_03_uart_tx.v"
+`include "list_ch08_01_uart_rx.v"
+`include "list_ch04_20_fifo.v"
+`include "list_ch04_11_mod_m_counter.v"
+
 `default_nettype none
-/*
- *-------------------------------------------------------------
- *
- * user_proj_example
- *
- * This is an example of a (trivially simple) user project,
- * showing how the user project can connect to the logic
- * analyzer, the wishbone bus, and the I/O pads.
- *
- * This project generates an integer count, which is output
- * on the user area GPIO pads (digital output only).  The
- * wishbone connection allows the project to be controlled
- * (start and stop) from the management SoC program.
- *
- * See the testbenches in directory "mprj_counter" for the
- * example programs that drive this user project.  The three
- * testbenches are "io_ports", "la_test1", and "la_test2".
- *
- *-------------------------------------------------------------
- */
 
 module user_proj_example #(
     parameter BITS = 32
 )(
 `ifdef USE_POWER_PINS
-    inout vdda1,	// User area 1 3.3V supply
-    inout vdda2,	// User area 2 3.3V supply
-    inout vssa1,	// User area 1 analog ground
-    inout vssa2,	// User area 2 analog ground
-    inout vccd1,	// User area 1 1.8V supply
-    inout vccd2,	// User area 2 1.8v supply
-    inout vssd1,	// User area 1 digital ground
-    inout vssd2,	// User area 2 digital ground
+    inout vdda1,    // User area 1 3.3V supply
+    inout vdda2,    // User area 2 3.3V supply
+    inout vssa1,    // User area 1 analog ground
+    inout vssa2,    // User area 2 analog ground
+    inout vccd1,    // User area 1 1.8V supply
+    inout vccd2,    // User area 2 1.8v supply
+    inout vssd1,    // User area 1 digital ground
+    inout vssd2,    // User area 2 digital ground
 `endif
-
     // Wishbone Slave ports (WB MI A)
-    input wb_clk_i,
-    input wb_rst_i,
-    input wbs_stb_i,
-    input wbs_cyc_i,
-    input wbs_we_i,
-    input [3:0] wbs_sel_i,
-    input [31:0] wbs_dat_i,
-    input [31:0] wbs_adr_i,
-    output wbs_ack_o,
-    output [31:0] wbs_dat_o,
+    input  wb_clk_i,
+    input  wb_rst_i,
+    input  wbs_cyc_i,
+    input  wbs_stb_i,
+    input  wbs_we_i,
+    input  [3:0] wbs_sel_i,
+    input  [31:0] wbs_dat_i,
+    input  [31:0] wbs_adr_i,
+    output  wbs_ack_o,
+    output  [31:0] wbs_dat_o,
 
     // Logic Analyzer Signals
-    input  [127:0] la_data_in,
-    output [127:0] la_data_out,
-    input  [127:0] la_oenb,
+    input   [127:0] la_data_in,
+    output  [127:0] la_data_out,
+    input   [127:0] la_oenb,
 
     // IOs
     input  [`MPRJ_IO_PADS-1:0] io_in,
@@ -72,100 +62,63 @@ module user_proj_example #(
     output [`MPRJ_IO_PADS-1:0] io_oeb,
 
     // IRQ
-    output [2:0] irq
+    output  [2:0] irq
 );
-    wire clk;
-    wire rst;
 
-    wire [`MPRJ_IO_PADS-1:0] io_in;
-    wire [`MPRJ_IO_PADS-1:0] io_out;
-    wire [`MPRJ_IO_PADS-1:0] io_oeb;
+wire clk;
+wire rst;
 
-    wire [31:0] rdata; 
-    wire [31:0] wdata;
-    wire [BITS-1:0] count;
+wire tx, rx;
 
-    wire valid;
-    wire [3:0] wstrb;
-    wire [31:0] la_write;
+wire valid;
+wire [31:0] rdata;
+wire [31:0] wdata;
 
-    // WB MI A
-    assign valid = wbs_cyc_i && wbs_stb_i; 
-    assign wstrb = wbs_sel_i & {4{wbs_we_i}};
-    assign wbs_dat_o = rdata;
-    assign wdata = wbs_dat_i;
+wire [7:0] compressed_data1;
+wire [7:0] decompressed_data1;
 
-    // IO
-    assign io_out = count;
-    assign io_oeb = {(`MPRJ_IO_PADS-1){rst}};
+// WB
+assign wbs_dat_o = rdata;
+assign wdata = wbs_dat_i;
+assign valid = wbs_cyc_i && wbs_stb_i;
 
-    // IRQ
-    assign irq = 3'b000;	// Unused
+// IO
+assign io_out[0] = tx;
+assign io_oeb[0] = 1'b1;
 
-    // LA
-    assign la_data_out = {{(127-BITS){1'b0}}, count};
-    // Assuming LA probes [63:32] are for controlling the count register  
-    assign la_write = ~la_oenb[63:32] & ~{BITS{valid}};
-    // Assuming LA probes [65:64] are for controlling the count clk & reset  
-    assign clk = (~la_oenb[64]) ? la_data_in[64]: wb_clk_i;
-    assign rst = (~la_oenb[65]) ? la_data_in[65]: wb_rst_i;
+assign rx = io_in[1];
+assign io_oeb[1] = 1'b0;
 
-    counter #(
-        .BITS(BITS)
-    ) counter(
-        .clk(clk),
-        .reset(rst),
-        .ready(wbs_ack_o),
-        .valid(valid),
-        .rdata(rdata),
-        .wdata(wbs_dat_i),
-        .wstrb(wstrb),
-        .la_write(la_write),
-        .la_input(la_data_in[63:32]),
-        .count(count)
-    );
+assign io_oeb[(`MPRJ_IO_PADS-1):2] = {(`MPRJ_IO_PADS-3){rst}};
+
+// LA
+assign la_data_out = {{(88){1'b0}}, decompressed_data1,{(32){1'b0}}}; 
+assign compressed_data1 = la_data_in[7:0];
+
+assign clk = (~la_oenb[32]) ? la_data_in[64]: wb_clk_i;
+assign rst = (~la_oenb[33]) ? la_data_in[65]: wb_rst_i;
+
+assign irq = 3'b000;
+
+yonga_lz4_decoder_top yonga_lz4_decoder_top (
+    
+    .clk(clk),
+    .rst(rst),
+
+    // MGMT SoC Wishbone Slave
+    .valid(valid),
+    .rdata(rdata),
+    .wdata(wdata),
+    .ready(wbs_ack_o),
+    .wr_en(wbs_we_i),
+
+    .compressed_data1(compressed_data1),
+    .decompressed_data1(decompressed_data1),
+
+    .rx(rx),
+    .tx(tx)
+);
 
 endmodule
 
-module counter #(
-    parameter BITS = 32
-)(
-    input clk,
-    input reset,
-    input valid,
-    input [3:0] wstrb,
-    input [BITS-1:0] wdata,
-    input [BITS-1:0] la_write,
-    input [BITS-1:0] la_input,
-    output ready,
-    output [BITS-1:0] rdata,
-    output [BITS-1:0] count
-);
-    reg ready;
-    reg [BITS-1:0] count;
-    reg [BITS-1:0] rdata;
-
-    always @(posedge clk) begin
-        if (reset) begin
-            count <= 0;
-            ready <= 0;
-        end else begin
-            ready <= 1'b0;
-            if (~|la_write) begin
-                count <= count + 1;
-            end
-            if (valid && !ready) begin
-                ready <= 1'b1;
-                rdata <= count;
-                if (wstrb[0]) count[7:0]   <= wdata[7:0];
-                if (wstrb[1]) count[15:8]  <= wdata[15:8];
-                if (wstrb[2]) count[23:16] <= wdata[23:16];
-                if (wstrb[3]) count[31:24] <= wdata[31:24];
-            end else if (|la_write) begin
-                count <= la_write & la_input;
-            end
-        end
-    end
-
-endmodule
 `default_nettype wire
