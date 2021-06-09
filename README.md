@@ -24,7 +24,7 @@ Checklist for Open-MPW Submission
 
 -  [x] The project repo adheres to the same directory structure in this
    repo
--  [ ] The project repo contain info.yaml at the project root
+-  [x] The project repo contain info.yaml at the project root
 -  [x] Top level macro is named ``user_project_wrapper``
 -  [ ] Full Chip Simulation passes for RTL and GL (gate-level)
 -  [ ] The hardened Macros are LVS and DRC clean
