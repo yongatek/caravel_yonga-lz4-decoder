@@ -22,7 +22,7 @@
 
 `timescale 1ns/ 100 ps
 
-module FIFO_v #(parameter ADDR_W = 5, DATA_W = 8, BUFF_L = 32, ALMST_F = 5, ALMST_E = 5) 	// buffer length must be less than or equal to address space as in  BUFF_L <or= 2^(ADDR_W)-1
+module FIFO_v #(parameter ADDR_W = 5, DATA_W = 8, BUFF_L = 32, ALMST_F = 7, ALMST_E = 5) 	// buffer length must be less than or equal to address space as in  BUFF_L <or= 2^(ADDR_W)-1
 			(
 			input  wire								clk,
 			input  wire 							n_reset,
