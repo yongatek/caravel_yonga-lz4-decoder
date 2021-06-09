@@ -95,8 +95,11 @@ assign io_oeb[(`MPRJ_IO_PADS-1):2] = {(`MPRJ_IO_PADS-3){rst}};
 assign la_data_out = {{(88){1'b0}}, decompressed_data1,{(32){1'b0}}}; 
 assign compressed_data1 = la_data_in[7:0];
 
-assign clk = (~la_oenb[64]) ? la_data_in[64]: wb_clk_i;
-assign rst = (~la_oenb[65]) ? la_data_in[65]: wb_rst_i;
+// assign clk = (~la_oenb[64]) ? la_data_in[64]: wb_clk_i;
+// assign rst = (~la_oenb[65]) ? la_data_in[65]: wb_rst_i;
+
+assign clk = wb_clk_i;
+assign rst = wb_rst_i;
 
 assign irq = 3'b000;
 
