@@ -13,7 +13,7 @@
 // Last Changed Date : %%
 // Last Changed By   : 
 // Designer
-//          Name     : Bahadir TURKOGLU
+//          Name     : Bahadir TÜRKOGLU
 //          E-mail   : bahadir.turkoglu@yongatek.com          
 // =====================================================================================
 
