@@ -101,15 +101,15 @@ module yonga_lz4_decoder_controller(
 	always @ (lz4_decompress_state,offset_byte,match_length_overflow,i_fifo1_compressed_data,end_of_block_byte,
 			  fifo1_read_request,i_fifo2_almst_full,last_data_write_ram)
 		begin
-			if(offset_byte == 1'b1  && match_length_overflow ==  1'b0 & fifo1_read_request == 1'b1)
+			if(offset_byte == 1'b1  && match_length_overflow ==  1'b0 && fifo1_read_request == 1'b1)
 				read_fifo_enable = 1'b0;		
-			else if(lz4_decompress_state == token_assign  &&  i_fifo1_compressed_data[7:4] != 4'b1111  && i_fifo2_almst_full == 1'b1)
+			else if(lz4_decompress_state == token_assign  &&  i_fifo1_compressed_data[7:4] != 4'b1111  && i_fifo2_almst_full == 1'b1 && fifo1_read_request == 1'b1)
 				read_fifo_enable = 1'b0;
-			else if(lz4_decompress_state == literal_length_optional  &&  i_fifo1_compressed_data[7:0] != 8'b11111111  && i_fifo2_almst_full == 1'b1) 
+			else if(lz4_decompress_state == literal_length_optional  &&  i_fifo1_compressed_data[7:0] != 8'b11111111  && i_fifo2_almst_full == 1'b1 && fifo1_read_request == 1'b1) 
 				read_fifo_enable = 1'b0;
 			else if(lz4_decompress_state == literals_assign  && i_fifo2_almst_full == 1'b1)
 				read_fifo_enable = 1'b0;	
-			else if(lz4_decompress_state == match_length_optional  &&  i_fifo1_compressed_data[7:0] != 4'b1111 )
+			else if(lz4_decompress_state == match_length_optional  && i_fifo1_compressed_data[7:0] != 8'b11111111 && fifo1_read_request == 1'b1)
 				read_fifo_enable = 1'b0;
 			else if(lz4_decompress_state == literals_copy  && last_data_write_ram == 1'b0)
 				read_fifo_enable = 1'b0;
@@ -137,7 +137,7 @@ module yonga_lz4_decoder_controller(
 //// --------------------------------------------------------------------------------------------------
 
 //// LZ4 Decompress State Machine
-	always @(posedge clk)
+	always @(posedge clk or negedge rstn)
 		begin
 			if(rstn == 1'b0)
 				begin
