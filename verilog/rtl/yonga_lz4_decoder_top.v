@@ -49,7 +49,6 @@ reg [2:0] uart_tx_full_flag_count1;
 wire decompress_fifo_empty1;
 
 wire o_in_fifo_full1;
-wire [7:0] decompress_data1;
 wire idle1;
 
 reg lz4_o_fifo_read_request1;
@@ -101,7 +100,7 @@ end
          )
         U5(
             .clk(clk),
-            .reset(!rstn),
+            .reset(rst),
             .tx(tx),
             .rx(rx),
             .rd_uart(rx_fifo_not_empty1),
