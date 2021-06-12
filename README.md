@@ -17,7 +17,7 @@ YONGA-LZ4 Decoder is an implementation of the decoder of the popular [LZ4](https
 Running Simulation
 ========
 
-### Wishbone Test
+### WISHBONE Test
 
 * This test is meant to verify that we can read and write to the YONGA-LZ4 Decoder through the WISHBONE port. The firmware first writes a compressed data stream to input FIFO of the YONGA-LZ4 Decoder, then reads decoded data stream from output FIFO of the YONGA-LZ4 Decoder.
 
