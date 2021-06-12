@@ -22,8 +22,8 @@
 #include "verilog/dv/caravel/stub.c"
 
 /*
-	Wishbone Test:
-		- Checks YONGA LZ4 Decoder functionality through the wishbone port
+	WISHBONE Test:
+		- Checks YONGA LZ4 Decoder functionality through the WISHBONE port
 */
 
 int i = 0; 
@@ -191,14 +191,14 @@ void main()
 
 	read_yonga_lz4_decoder_status();
 	while((yonga_lz4_decoder_status & yonga_lz4_decoder_is_idle_mask) == 0x0){ // Check whether the decoder is running or not
-	  if(yonga_lz4_decoder_status & yonga_lz4_decoder_o_fifo_is_almost_full_mask){ // Check if the decoder of o_fifo is almost full
+	  if(yonga_lz4_decoder_status & yonga_lz4_decoder_o_fifo_is_almost_full_mask){ // Check if the o_fifo is almost full
 	  	while((yonga_lz4_decoder_status & yonga_lz4_decoder_o_fifo_is_empty_mask) == 0x0){
 	  		reg_mprj_slave = 0x10; // Read 1 byte from o_fifo
 	  		yonga_lz4_decoder_actual_result_seq[idx_o++] = reg_la1_data; // Result is read from LA
 	  		read_yonga_lz4_decoder_status();
 	  	}
 	  }
-	  else if((yonga_lz4_decoder_status & yonga_lz4_decoder_i_fifo_is_full_mask) == 0x0){
+	  else if((yonga_lz4_decoder_status & yonga_lz4_decoder_i_fifo_is_full_mask) == 0x0){ // Check if the i_fifo is full
 	  	reg_la0_data = yonga_lz4_decoder_test_seq[idx_i++];
 	  	reg_mprj_slave = 0x01; // Write 1 byte to i_fifo
 	  }
@@ -206,7 +206,7 @@ void main()
 	}
 
 	read_yonga_lz4_decoder_status();
-	if((yonga_lz4_decoder_status & yonga_lz4_decoder_o_fifo_is_empty_mask) == 0x0){
+	if((yonga_lz4_decoder_status & yonga_lz4_decoder_o_fifo_is_empty_mask) == 0x0){ // Check if data is left in o_fifo after decoder stops running
 		while((yonga_lz4_decoder_status & yonga_lz4_decoder_o_fifo_is_empty_mask) == 0x0){
 	  		reg_mprj_slave = 0x10; // Read 1 byte from o_fifo
 	  		yonga_lz4_decoder_actual_result_seq[idx_o++] = reg_la1_data; // Result is read from LA
