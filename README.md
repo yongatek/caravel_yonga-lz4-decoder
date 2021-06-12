@@ -6,20 +6,29 @@ Table of contents
 =================
 
 - [Overview](#overview)
-- [Simulation](#simulation)
-- [Checklist for Open-MPW Submission](#checklist-for-open-mpw-submission)
+- [Running Simulation](#running-simulation)
+- [Checklist for Open-MPW Two Submission](#checklist-for-open-mpw-two-submission)
 
 Overview
 ========
 
 YONGA-LZ4 Decoder is an implementation of the decoder of the popular [LZ4](https://github.com/lz4/lz4) compression algorithm.
 
-Simulation
+Running Simulation
 ========
 
-TBA
+### Wishbone Test
 
-Checklist for Open-MPW Submission
+* This test is meant to verify that we can read and write to the YONGA-LZ4 Decoder through the WISHBONE port. The firmware first writes a compressed data stream to input FIFO of the YONGA-LZ4 Decoder, then reads decoded data stream from output FIFO of the YONGA-LZ4 Decoder.
+
+To run RTL simulation, 
+
+```bash
+cd $UPRJ_ROOT
+make verify-wb_test
+```
+
+Checklist for Open-MPW Two Submission
 =================================
 
 -  [x] The project repo adheres to the same directory structure in this
@@ -31,4 +40,4 @@ Checklist for Open-MPW Submission
 -  [x] The hardened ``user_project_wrapper`` adheres to the same pin
    order specified at [pin_order](https://github.com/efabless/caravel/blob/master/openlane/user_project_wrapper_empty/pin_order.cfg)
 -  [x] XOR check passes with zero total difference.
--  [ ] Openlane summary reports are retained under ./signoff/
+-  [x] Openlane summary reports are retained under ./signoff/
