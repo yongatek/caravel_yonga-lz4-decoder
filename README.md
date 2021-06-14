@@ -8,6 +8,7 @@ Table of contents
 - [Overview](#overview)
 - [Setup](#setup)
 - [Running Simulation](#running-simulation)
+- [Hardening the User Project Macro using OpenLANE](#hardening-the-user-project-macro-using-openlane)
 - [Checklist for Open-MPW Two Submission](#checklist-for-open-mpw-two-submission)
 
 Overview
@@ -37,6 +38,16 @@ To run RTL simulation,
 ```bash
 cd $UPRJ_ROOT
 make verify-wb_test
+```
+
+Hardening the User Project Macro using OpenLANE
+========
+
+```bash
+# Run openlane to harden user_proj_example
+make user_proj_example
+# Run openlane to harden user_project_wrapper
+make user_project_wrapper
 ```
 
 Checklist for Open-MPW Two Submission
