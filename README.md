@@ -6,6 +6,7 @@ Table of contents
 =================
 
 - [Overview](#overview)
+- [Setup](#setup)
 - [Running Simulation](#running-simulation)
 - [Checklist for Open-MPW Two Submission](#checklist-for-open-mpw-two-submission)
 
@@ -13,6 +14,16 @@ Overview
 ========
 
 YONGA-LZ4 Decoder is an implementation of the decoder of the popular [LZ4](https://github.com/lz4/lz4) compression algorithm.
+
+Setup
+========
+
+```bash
+export PDK_ROOT=<pdk-installation-path>
+export OPENLANE_ROOT=<openlane-installation-path>
+cd $UPRJ_ROOT
+export CARAVEL_ROOT=$(pwd)/caravel
+```
 
 Running Simulation
 ========
