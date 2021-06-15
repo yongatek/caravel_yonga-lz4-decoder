@@ -24,6 +24,7 @@ export PDK_ROOT=<pdk-installation-path>
 export OPENLANE_ROOT=<openlane-installation-path>
 cd $UPRJ_ROOT
 export CARAVEL_ROOT=$(pwd)/caravel
+make install
 ```
 
 Running Simulation
