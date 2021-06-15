@@ -10,6 +10,7 @@ Table of contents
 - [Running Simulation](#running-simulation)
 - [Hardening the User Project Macro using OpenLANE](#hardening-the-user-project-macro-using-openlane)
 - [Checklist for Open-MPW Two Submission](#checklist-for-open-mpw-two-submission)
+- [List of Contributors](#list-of-contributors)
 
 Overview
 ========
@@ -64,3 +65,14 @@ Checklist for Open-MPW Two Submission
    order specified at [pin_order](https://github.com/efabless/caravel/blob/master/openlane/user_project_wrapper_empty/pin_order.cfg)
 -  [x] XOR check passes with zero total difference.
 -  [x] Openlane summary reports are retained under ./signoff/
+
+List of Contributors
+=================================
+
+*In alphabetical order:*
+
+- Abdullah Yildiz
+- Altug Somay
+- Burak Yakup Cakar
+- Muhammed Bahadir Turkoglu
+- Rifat Demircioglu
