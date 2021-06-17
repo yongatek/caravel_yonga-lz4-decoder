@@ -1,5 +1,5 @@
 // =====================================================================================  
-// (C) COPYRIGHT 2016 YongaTek (Yonga Technology Microelectronics)
+// (C) COPYRIGHT 2021 YongaTek (Yonga Technology Microelectronics)
 // All rights reserved.
 // This file contains confidential and proprietary information of YongaTek and 
 // is protected under international copyright and other intellectual property laws.
